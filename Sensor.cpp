@@ -49,20 +49,16 @@ void updateSensors() {
   dt = (millis() - timer) / 1000.0;
   timer = millis();
 
-  // Углы с использованием акселерометра
   float accelRoll = atan2(accelY, accelZ) * 57.3;
   float accelPitch = atan2(-accelX, sqrt(accelY * accelY + accelZ * accelZ)) * 57.3; 
 
-  // Интеграция углов с использованием гироскопа
   roll += gyroX * dt;
   pitch += gyroY * dt;
   yaw += gyroZ * dt;
 
-  // Применение фильтра комплементарного типа
   roll = alpha * roll + (1 - alpha) * accelRoll;
   pitch = alpha * pitch + (1 - alpha) * accelPitch;
 
-  // Корректировка угла yaw
   if (yaw > 180) {
     yaw -= 360;
   } else if (yaw < -180) {
