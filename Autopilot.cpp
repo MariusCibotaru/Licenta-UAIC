@@ -4,12 +4,10 @@
 #include "Sensor.h"
 #include <Arduino.h>
 
-// Параметры PID контроллера для высоты
 float kp_altitude = 1.0;
 float ki_altitude = 0.5;
 float kd_altitude = 0.25;
 
-// Параметры PID контроллера для roll и pitch
 float kp_angle = 1.0;
 float ki_angle = 0.1;
 float kd_angle = 0.05;
@@ -33,33 +31,26 @@ float integralPitch = 0.0;
 extern WebServer server;
 
 void setupAutopilot() {
-  // Инициализация автопилота
 }
 
 void updateAutopilot() {
   if (takeoffCommand && !pilotOverride) {
     adjustAltitude();
 
-    // Контроль высоты
     float pidOutputAltitude = computePID(kp_altitude, ki_altitude, kd_altitude, targetAltitude, distance, previousErrorAltitude, integralAltitude);
-
-    // Контроль углов roll и pitch
     float pidOutputRoll = computePID(kp_angle, ki_angle, kd_angle, desiredRoll, -roll, previousErrorRoll, integralRoll);
     float pidOutputPitch = computePID(kp_angle, ki_angle, kd_angle, desiredPitch, -pitch, previousErrorPitch, integralPitch);
 
-    // Расчет мощности для каждого двигателя
     float motor1 = constrain(pidOutputAltitude - pidOutputRoll + pidOutputPitch, 0, 255);
     float motor2 = constrain(pidOutputAltitude + pidOutputRoll + pidOutputPitch, 0, 255);
     float motor3 = constrain(pidOutputAltitude + pidOutputRoll - pidOutputPitch, 0, 255);
     float motor4 = constrain(pidOutputAltitude - pidOutputRoll - pidOutputPitch, 0, 255);
 
-    // Установка минимальной мощности двигателей на 50%
     motor1 = max(motor1, 127.0f);
     motor2 = max(motor2, 127.0f);
     motor3 = max(motor3, 127.0f);
     motor4 = max(motor4, 127.0f);
 
-    // Установка мощности двигателей
     setMotorSpeed(1, motor1);
     setMotorSpeed(2, motor2);
     setMotorSpeed(3, motor3);
@@ -74,7 +65,6 @@ void updateAutopilot() {
     Serial.print(", ");
     Serial.println(motor4);
 
-    // Проверка, если целевая высота достигнута и отмена взлета
     if (abs(desiredAltitude - distance) <= 0.1 && desiredAltitude == 1.0) {
       takeoffCommand = false;
       targetAltitude = 0.0;
@@ -83,7 +73,7 @@ void updateAutopilot() {
       setMotorSpeed(3, 0);
       setMotorSpeed(4, 0);
       Serial.println("Motors stopped: 0, 0, 0, 0");
-      desiredAltitude = 0.0; // Устанавливаем desiredAltitude в 0 после остановки моторов
+      desiredAltitude = 0.0;
     }
   }
 }
@@ -112,13 +102,12 @@ void handleTakeoff() {
   Serial.println("Takeoff command received"); 
   desiredAltitude = 10.0; 
   takeoffCommand = true;
-  server.send(200, "text/plain", "Взлет начат");
+  server.send(200, "text/plain", "takeoff");
 }
 
 void handleCancelTakeoff() {
   Serial.println("Cancel takeoff command received");
   desiredAltitude = 1.0; 
-  // Немедленно установить скорости моторов на 0, если высота меньше или равна 4 см
   if (distance <= 4.0) {
     takeoffCommand = false;
     targetAltitude = 0.0;
@@ -126,13 +115,13 @@ void handleCancelTakeoff() {
     setMotorSpeed(2, 0);
     setMotorSpeed(3, 0);
     setMotorSpeed(4, 0);
-    desiredAltitude = 0.0; // Устанавливаем desiredAltitude в 0 после остановки моторов
+    desiredAltitude = 0.0; 
     Serial.println("Motors stopped: 0, 0, 0, 0");
   } else {
     Serial.println("Descending...");
   }
 
-  server.send(200, "text/plain", "Взлет отменен");
+  server.send(200, "text/plain", "cancel takeoff");
 }
 
 void handleSetTargetHeight() {
