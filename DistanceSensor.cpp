@@ -17,13 +17,12 @@ void setupDistanceSensor() {
 }
 
 void updateDistanceSensor() {
-  float newDistance = sensor.readRangeContinuousMillimeters() / 10.0; // Преобразуем в сантиметры
+  float newDistance = sensor.readRangeContinuousMillimeters() / 10.0; 
 
   if (sensor.timeoutOccurred()) {
     Serial.print(" VL53L0X Timeout!");
   } else {
-    // Обновляем расстояние только если оно больше 4 см
-    if (newDistance > 4.0) { // Устанавливаем порог для минимального значения
+    if (newDistance > 4.0) {
       distance = newDistance;
     }
   }
