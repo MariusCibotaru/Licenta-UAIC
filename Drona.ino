@@ -7,14 +7,11 @@
 #include "Autopilot.h"
 #include "Pilot.h"
 
-// WiFi настройки
 const char* ssid = "ESP32_Access_Point";
 const char* password = "12345678";
 
-// Объекты
 WebServer server(80);
 
-// Переменные для хранения данных датчиков
 extern float distance; 
 extern float roll, pitch, yaw;
 extern bool takeoffCommand;
@@ -278,7 +275,7 @@ const char* htmlContent = R"rawliteral(
     let isFetchingData = false;
 
     async function fetchData() {
-      if (isFetchingData) return; // избегаем повторных вызовов
+      if (isFetchingData) return; 
       isFetchingData = true;
     
       try {
@@ -320,7 +317,7 @@ const char* htmlContent = R"rawliteral(
         isFetchingData = false;
       }
     
-      setTimeout(fetchData, 100); // увеличиваем интервал до 1 секунды
+      setTimeout(fetchData, 100);
     }
 
     function updateHeight(value) {
@@ -548,7 +545,7 @@ const char* htmlContent = R"rawliteral(
       };
       const buttonId = buttonMap[key];
       if (buttonId) {
-        console.log(`Key pressed: ${key} -> Button ID: ${buttonId}`); // Debug log
+        console.log(`Key pressed: ${key} -> Button ID: ${buttonId}`); 
         if (buttonId === 'btnSpace') {
           toggleTakeoff();
         } else if (buttonId === 'btnW') {
