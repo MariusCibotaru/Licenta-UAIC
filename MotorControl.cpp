@@ -59,9 +59,9 @@ void handleMotor() {
     int motor = server.arg("motor").toInt();
     int speed = server.arg("speed").toInt();
     setMotorSpeed(motor, speed);
-    server.send(200, "text/plain", "Скорость мотора обновлена");
+    server.send(200, "text/plain", "Viteza a fost modificata");
   } else {
-    server.send(400, "text/plain", "Отсутствует параметр мотор или скорость");
+    server.send(400, "text/plain", "eroare");
   }
 }
 
@@ -72,8 +72,8 @@ void handleAllMotors() {
     setMotorSpeed(2, speed);
     setMotorSpeed(3, speed);
     setMotorSpeed(4, speed);
-    server.send(200, "text/plain", "Скорость всех моторов обновлена");
+    server.send(200, "text/plain", "Viteza a fost modificata");
   } else {
-    server.send(400, "text/plain", "Отсутствует параметр скорость");
+    server.send(400, "text/plain", "eroare");
   }
 }
